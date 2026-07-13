@@ -346,6 +346,72 @@ footer{background:var(--black);border-top:1px solid rgba(201,168,76,.15);padding
   .modal-specs{grid-template-columns:repeat(2,1fr)}
   .hero-stats{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ═══════════════════════════════════════════════════
+   SEARCH & FILTER PANEL  (CMS-READY)
+   All filter logic lives in applyFilters() in the JS.
+   To connect a CMS, replace the `properties` array and
+   call applyFilters() after populating it.
+═══════════════════════════════════════════════════ */
+
+/* Search bar */
+.search-wrap{position:relative;margin-bottom:20px}
+.search-wrap input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.3);border-radius:50px;padding:14px 20px 14px 50px;color:var(--white);font-family:'Inter',sans-serif;font-size:.9rem;outline:none;transition:all .3s}
+.search-wrap input:focus{border-color:var(--gold);background:rgba(201,168,76,.06);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.search-wrap input::placeholder{color:rgba(255,255,255,.35)}
+.search-wrap .search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:.95rem;pointer-events:none}
+.search-wrap .search-clear{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--gray);cursor:pointer;font-size:.85rem;display:none;background:none;border:none;padding:4px;transition:color .2s}
+.search-wrap .search-clear:hover{color:var(--gold)}
+.search-wrap input:not(:placeholder-shown) ~ .search-clear{display:block}
+
+/* Filter row */
+.filter-panel{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.15);border-radius:16px;padding:20px 22px;margin-bottom:28px}
+.filter-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;align-items:end}
+.filter-group{display:flex;flex-direction:column;gap:6px}
+.filter-label{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.filter-select{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;color:var(--white);font-family:'Inter',sans-serif;font-size:.83rem;outline:none;cursor:pointer;transition:all .3s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:calc(100% - 12px) 50%}
+.filter-select:focus{border-color:var(--gold);background-color:rgba(201,168,76,.06);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.filter-select option{background:#1a1a24;color:var(--white)}
+
+/* Price range inputs */
+.price-range-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.price-range-wrap input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 12px;color:var(--white);font-family:'Inter',sans-serif;font-size:.83rem;outline:none;transition:all .3s}
+.price-range-wrap input:focus{border-color:var(--gold);background:rgba(201,168,76,.06);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.price-range-wrap input::placeholder{color:rgba(255,255,255,.3)}
+
+/* Results row */
+.results-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.results-count{font-size:.85rem;color:var(--gray)}
+.results-count strong{color:var(--gold);font-weight:700}
+.sort-wrap{display:flex;align-items:center;gap:10px}
+.sort-label{font-size:.78rem;color:var(--gray);white-space:nowrap}
+.sort-select{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 32px 8px 12px;color:var(--white);font-family:'Inter',sans-serif;font-size:.82rem;outline:none;cursor:pointer;transition:all .3s;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:calc(100% - 10px) 50%}
+.sort-select:focus{border-color:var(--gold)}
+.sort-select option{background:#1a1a24}
+
+/* Clear button */
+.btn-clear-filters{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:50px;color:var(--gray);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;white-space:nowrap}
+.btn-clear-filters:hover{border-color:rgba(201,168,76,.5);color:var(--gold);background:rgba(201,168,76,.08)}
+.btn-clear-filters.has-filters{border-color:rgba(201,168,76,.5);color:var(--gold);background:rgba(201,168,76,.08)}
+
+/* No results */
+.no-results{text-align:center;padding:80px 20px;color:var(--gray)}
+.no-results i{font-size:3rem;color:rgba(201,168,76,.3);margin-bottom:20px;display:block}
+.no-results h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:10px}
+.no-results p{font-size:.9rem;line-height:1.7}
+
+/* Responsive */
+@media(max-width:768px){
+  .filter-row{grid-template-columns:1fr 1fr}
+  .results-row{flex-direction:column;align-items:flex-start}
+  .sort-wrap{width:100%}
+  .sort-select{flex:1}
+}
+@media(max-width:480px){
+  .filter-row{grid-template-columns:1fr}
+  .price-range-wrap{grid-template-columns:1fr 1fr}
+}
+
 </style>
 </head>
 <body>
@@ -505,14 +571,99 @@ footer{background:var(--black);border-top:1px solid rgba(201,168,76,.15);padding
         <div class="section-label">Our Listings</div>
         <h2 class="section-title">Premium <span>Properties</span></h2>
         <p class="section-sub">Handpicked premium listings across Kanpur — residential, commercial, and investment.</p>
-        <div class="filter-tabs">
-          <div class="filter-tab active" onclick="filterProps(this,'all')">All</div>
-          <div class="filter-tab" onclick="filterProps(this,'residential')">Residential</div>
-          <div class="filter-tab" onclick="filterProps(this,'commercial')">Commercial</div>
-          <div class="filter-tab" onclick="filterProps(this,'land')">Land / Plots</div>
+      </div>
+    </div>
+
+    <!-- ═══ SEARCH BAR ═══ -->
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="prop-search" placeholder="Search by title, location or keyword…" autocomplete="off" oninput="applyFilters()"/>
+      <button class="search-clear" id="search-clear-btn" onclick="clearSearch()" title="Clear search">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- ═══ FILTER PANEL ═══ -->
+    <!-- CMS NOTE: When connecting a CMS, replace the `properties` array in JS
+         and call applyFilters() after data loads. No changes needed here. -->
+    <div class="filter-panel">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label class="filter-label">Location</label>
+          <select class="filter-select" id="f-location" onchange="applyFilters()">
+            <option value="">All Locations</option>
+            <option value="Kakadeo">Kakadeo</option>
+            <option value="Pandu Nagar">Pandu Nagar</option>
+            <option value="Naveen Nagar">Naveen Nagar</option>
+            <option value="Govind Nagar">Govind Nagar</option>
+            <option value="Kidwai Nagar">Kidwai Nagar</option>
+            <option value="Shyam Nagar">Shyam Nagar</option>
+            <option value="Armapur">Armapur</option>
+            <option value="Kanpur">Kanpur (Other)</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Property Type</label>
+          <select class="filter-select" id="f-type" onchange="applyFilters()">
+            <option value="">All Types</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Villa">Villa</option>
+            <option value="Plot">Plot / Land</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Office">Office</option>
+            <option value="Farm House">Farm House</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Bedrooms</label>
+          <select class="filter-select" id="f-beds" onchange="applyFilters()">
+            <option value="">Any Bedrooms</option>
+            <option value="1">1 BHK</option>
+            <option value="2">2 BHK</option>
+            <option value="3">3 BHK</option>
+            <option value="4">4 BHK</option>
+            <option value="5">5+ BHK</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Purpose</label>
+          <select class="filter-select" id="f-purpose" onchange="applyFilters()">
+            <option value="">Any Purpose</option>
+            <option value="For Sale">For Sale</option>
+            <option value="For Rent">For Rent</option>
+            <option value="Investment">Investment</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Residential">Residential</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Price Range (₹ Lakhs)</label>
+          <div class="price-range-wrap">
+            <input type="number" id="f-price-min" placeholder="Min" min="0" oninput="applyFilters()"/>
+            <input type="number" id="f-price-max" placeholder="Max" min="0" oninput="applyFilters()"/>
+          </div>
+        </div>
+        <div class="filter-group" style="justify-content:flex-end;padding-top:4px;">
+          <button class="btn-clear-filters" id="clear-filters-btn" onclick="clearAllFilters()">
+            <i class="fas fa-times-circle"></i> Clear All Filters
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- ═══ RESULTS BAR ═══ -->
+    <div class="results-row">
+      <div class="results-count" id="results-count"><strong>0</strong> properties found</div>
+      <div class="sort-wrap">
+        <span class="sort-label">Sort by:</span>
+        <select class="sort-select" id="f-sort" onchange="applyFilters()">
+          <option value="newest">Newest First</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
     <div class="properties-grid" id="props-grid"></div>
   </div>
 </section>
@@ -798,56 +949,193 @@ const properties = [
     }
     ];
 
-let currentFilter = 'all';
+// ═══════════════════════════════════════════════════════════
+// SEARCH & FILTER LOGIC — CMS-READY
+// ─────────────────────────────────────────────────────────
+// To connect a CMS (e.g. Sanity):
+//   1. Replace the `properties` array below with a fetch
+//      call to your CMS API that returns the same shape.
+//   2. Call applyFilters() after the data loads.
+//   3. The filterProps() and applyFilters() functions need
+//      no changes — they work on whatever is in `properties`.
+// ═══════════════════════════════════════════════════════════
 
-function renderProps(filter) {
-    const grid = document.getElementById('props-grid');
-    const filtered = filter === 'all' ? properties : properties.filter(p => p.type === filter);
-    grid.innerHTML = '';
-    filtered.forEach((p, i) => {
-      const bedsHTML = p.beds ? `<div class="prop-meta-item"><i class="fas fa-bed"></i> ${p.beds} BHK</div>` : '';
-      const areaHTML = p.area ? `<div class="prop-meta-item"><i class="fas fa-ruler-combined"></i> ${p.area}</div>` : '';
-      const priceHTML = p.price ? `<span class="prop-price">${p.price}</span>` : '';
-      grid.innerHTML += `
-        <div class="prop-card" data-aos="fade-up" data-aos-delay="${Math.min(i*60,300)}">
-          <div class="prop-img-wrap">
-            <img src="${p.img}" alt="${p.title}" loading="lazy"/>
-            <span class="prop-badge">${p.badge}</span>
-            ${priceHTML}
-          </div>
-          <div class="prop-body">
-            <div class="prop-title">${p.title}</div>
-            <div class="prop-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
-            <div class="prop-meta">
-              ${areaHTML}
-              ${bedsHTML}
-              <div class="prop-meta-item"><i class="fas fa-check-circle"></i> Verified</div>
-            </div>
-            <div class="prop-actions">
-              <button class="prop-btn prop-btn-primary" onclick="openModal(${i})">View Details</button>
-              <a href="tel:+917897500605" class="prop-btn prop-btn-call"><i class="fas fa-phone"></i> Call Now</a>
-              <a href="https://wa.me/917897500605?text=${encodeURIComponent('Hello Royal Properties, I am interested in this property: ' + p.title + '. Please share more details.')}" target="_blank" class="prop-btn prop-btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-            </div>
-          </div>
-        </div>`;
-    });
-    AOS.refresh();
+// Enrich each property with CMS-ready filter fields.
+// These are the fields the filter system reads:
+//   p.propertyType  — "Apartment"|"Villa"|"Plot"|"Commercial"|"Office"|"Farm House"
+//   p.purpose       — "For Sale"|"For Rent"|"Investment"|"Commercial"|"Residential"
+//   p.priceValue    — numeric value in lakhs (0 = price on request)
+//   p.city          — city/area name used for location filter
+properties.forEach(p => {
+  if(!p.propertyType){
+    // Infer propertyType from existing data
+    const b = (p.badge||'').toLowerCase();
+    const t = (p.type||'').toLowerCase();
+    const ti = (p.title||'').toLowerCase();
+    if(b.includes('villa')||ti.includes('villa')) p.propertyType='Villa';
+    else if(b.includes('apartment')||b.includes('flat')||ti.includes('flat')||ti.includes('apartment')) p.propertyType='Apartment';
+    else if(t==='commercial'||b.includes('commercial')||b.includes('shop')||ti.includes('shop')) p.propertyType='Commercial';
+    else if(t==='land'||b.includes('plot')||b.includes('land')||ti.includes('plot')||ti.includes('land')) p.propertyType='Plot';
+    else p.propertyType='Apartment';
+  }
+  if(!p.purpose){
+    const b=(p.badge||'').toLowerCase();
+    const s=(p.status||'').toLowerCase();
+    if(b.includes('investment')||s.includes('investment')) p.purpose='Investment';
+    else if(b.includes('rent')||s.includes('rent')) p.purpose='For Rent';
+    else if((p.type||'').toLowerCase()==='commercial'||b.includes('commercial')) p.purpose='Commercial';
+    else p.purpose='For Sale';
+  }
+  if(!p.priceValue){
+    // Parse price string like "₹85 Lakhs", "32 Lakhs", "1.2 Crore"
+    const raw=(p.price||'').replace(/[₹,\s]/g,'').toLowerCase();
+    if(raw.includes('crore')){
+      p.priceValue=parseFloat(raw)*100||0;
+    } else if(raw.includes('lakh')||raw.includes('lac')){
+      p.priceValue=parseFloat(raw)||0;
+    } else {
+      p.priceValue=parseFloat(raw)||0;
     }
-function filterProps(tab, filter) {
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  currentFilter = filter;
-  renderProps(filter);
+  }
+  if(!p.city){
+    // Extract first recognisable area from location string
+    const areas=['Kakadeo','Naveen Nagar','Pandu Nagar','Govind Nagar',
+                 'Kidwai Nagar','Shyam Nagar','Armapur'];
+    const loc=p.location||'';
+    p.city=areas.find(a=>loc.toLowerCase().includes(a.toLowerCase()))||'Kanpur';
+  }
+});
+
+// ─── applyFilters ─────────────────────────────────────────
+// Single entry-point: reads all filter inputs and re-renders.
+// ─────────────────────────────────────────────────────────
+function applyFilters(){
+  const q       = (document.getElementById('prop-search').value||'').toLowerCase().trim();
+  const location= document.getElementById('f-location').value;
+  const type    = document.getElementById('f-type').value;
+  const beds    = document.getElementById('f-beds').value;
+  const purpose = document.getElementById('f-purpose').value;
+  const priceMin= parseFloat(document.getElementById('f-price-min').value)||0;
+  const priceMax= parseFloat(document.getElementById('f-price-max').value)||Infinity;
+  const sort    = document.getElementById('f-sort').value;
+
+  let result = properties.filter(p => {
+    // Search
+    if(q){
+      const haystack=[p.title,p.location,p.badge,p.propertyType,p.purpose,p.city].join(' ').toLowerCase();
+      if(!haystack.includes(q)) return false;
+    }
+    // Location
+    if(location && p.city!==location) return false;
+    // Property type
+    if(type && p.propertyType!==type) return false;
+    // Bedrooms
+    if(beds){
+      const n=parseInt(beds);
+      if(n>=5){ if(!(p.beds>=5)) return false; }
+      else { if(p.beds!==n) return false; }
+    }
+    // Purpose
+    if(purpose && p.purpose!==purpose) return false;
+    // Price range (only filter if a price is set on the property)
+    if(p.priceValue>0){
+      if(p.priceValue<priceMin) return false;
+      if(priceMax!==Infinity && p.priceValue>priceMax) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  if(sort==='price-asc')  result.sort((a,b)=>(a.priceValue||Infinity)-(b.priceValue||Infinity));
+  if(sort==='price-desc') result.sort((a,b)=>(b.priceValue||0)-(a.priceValue||0));
+  // 'newest' keeps original array order (already default)
+
+  // Update results count
+  const countEl=document.getElementById('results-count');
+  if(countEl) countEl.innerHTML=`<strong>${result.length}</strong> ${result.length===1?'property':'properties'} found`;
+
+  // Update clear button state
+  const hasFilters=q||location||type||beds||purpose||priceMin||priceMax!==Infinity;
+  const clearBtn=document.getElementById('clear-filters-btn');
+  if(clearBtn) clearBtn.classList.toggle('has-filters',!!hasFilters);
+
+  renderProps(result);
 }
 
-renderProps('all');
+// ─── renderProps ──────────────────────────────────────────
+// Receives the already-filtered-and-sorted array.
+// Keeps original modal index via data attribute for safety.
+// ─────────────────────────────────────────────────────────
+function renderProps(list){
+  const grid=document.getElementById('props-grid');
+  if(!list.length){
+    grid.innerHTML=`<div class="no-results" style="grid-column:1/-1">
+      <i class="fas fa-search"></i>
+      <h3>No properties found</h3>
+      <p>Try adjusting your filters or clearing the search to see all listings.</p>
+    </div>`;
+    if(typeof AOS!=='undefined') AOS.refresh();
+    return;
+  }
+  grid.innerHTML='';
+  list.forEach((p,i)=>{
+    const realIdx=properties.indexOf(p);
+    const bedsHTML=p.beds?`<div class="prop-meta-item"><i class="fas fa-bed"></i> ${p.beds} BHK</div>`:'';
+    const areaHTML=p.area?`<div class="prop-meta-item"><i class="fas fa-ruler-combined"></i> ${p.area}</div>`:'';
+    const priceHTML=p.price?`<span class="prop-price">${p.price}</span>`:'';
+    grid.innerHTML+=`
+      <div class="prop-card" data-aos="fade-up" data-aos-delay="${Math.min(i*60,300)}">
+        <div class="prop-img-wrap">
+          <img src="${p.img}" alt="${p.title}" loading="lazy"/>
+          <span class="prop-badge">${p.badge}</span>
+          ${priceHTML}
+        </div>
+        <div class="prop-body">
+          <div class="prop-title">${p.title}</div>
+          <div class="prop-location"><i class="fas fa-map-marker-alt"></i> ${p.location}</div>
+          <div class="prop-meta">
+            ${areaHTML}
+            ${bedsHTML}
+            <div class="prop-meta-item"><i class="fas fa-check-circle"></i> Verified</div>
+          </div>
+          <div class="prop-actions">
+            <button class="prop-btn prop-btn-primary" onclick="openModal(${realIdx})">View Details</button>
+            <a href="tel:+917897500605" class="prop-btn prop-btn-call"><i class="fas fa-phone"></i> Call Now</a>
+            <a href="https://wa.me/917897500605?text=${encodeURIComponent('Hello Royal Properties, I am interested in this property: '+p.title+'. Please share more details.')}" target="_blank" class="prop-btn prop-btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          </div>
+        </div>
+      </div>`;
+  });
+  if(typeof AOS!=='undefined') AOS.refresh();
+}
+
+// ─── clearAllFilters / clearSearch ────────────────────────
+function clearAllFilters(){
+  document.getElementById('prop-search').value='';
+  document.getElementById('f-location').value='';
+  document.getElementById('f-type').value='';
+  document.getElementById('f-beds').value='';
+  document.getElementById('f-purpose').value='';
+  document.getElementById('f-price-min').value='';
+  document.getElementById('f-price-max').value='';
+  document.getElementById('f-sort').value='newest';
+  applyFilters();
+}
+function clearSearch(){
+  document.getElementById('prop-search').value='';
+  applyFilters();
+}
+
+// ─── openModal — works on full properties array index ─────
+function filterProps(){} // kept for compatibility (no longer used)
+
+applyFilters(); // initial render
 
 // ═══════════════════════════
 // MODAL
 // ═══════════════════════════
 function openModal(idx) {
-    const filtered = currentFilter === 'all' ? properties : properties.filter(p => p.type === currentFilter);
-    const p = filtered[idx];
+    const p = properties[idx];
     if (!p) return;
     document.getElementById('modal-img').src = p.img;
     document.getElementById('modal-img').alt = p.title;
