@@ -898,52 +898,73 @@ footer{background:var(--black);border-top:1px solid rgba(201,168,76,.15);padding
 // Get your Project ID from: https://sanity.io/manage → your project
 // ═══════════════════════════════════════════════════════════════
 const SANITY_CONFIG = {
-  projectId: 'hfd0rylt',   // ← replace with your project ID
+  projectId: 'hfd0rylt',
   dataset:   'production',        // ← change if you use a different dataset
-  apiVersion:'2024-01-01',
-  useCdn:    true,
+  apiVersion:'2021-10-21',
+  useCdn:    false,  // direct API — more reliable, no CDN caching
 };
 
 // ─────────────────────────────────────────────────────────────
-// GROQ query — fetches all published properties from Sanity.
+// GROQ query — fetches ALL properties from Sanity (no published filter).
 // When you add/edit/publish a property in the Sanity admin,
 // the website reflects the change within ~60 seconds.
 //
 // CMS NOTE: If you add new fields to the Sanity schema later,
 //   add them to this query and map them in normaliseProperty().
 // ─────────────────────────────────────────────────────────────
-const SANITY_GROQ = `*[_type == "property" && published == true] | order(_createdAt desc) {
+const SANITY_GROQ = `*[_type == "property"] | order(_createdAt desc) {
   _id,
   _createdAt,
-  propertyId,
+  _updatedAt,
   title,
+  name,
+  propertyName,
   description,
+  desc,
+  details,
   price,
+  priceLabel,
   priceValue,
+  amount,
+  numericPrice,
   location,
-  city,
-  propertyType,
-  purpose,
-  beds,
-  baths,
   area,
+  locality,
+  address,
+  city,
+  cityName,
+  propertyType,
+  property_type,
+  purpose,
+  listingType,
+  isForRent,
+  beds,
+  bedrooms,
+  bhk,
+  baths,
+  bathrooms,
+  builtUpArea,
+  plotArea,
+  carpetArea,
+  areaInSqft,
   badge,
+  tag,
+  label,
+  status,
+  availabilityStatus,
   featured,
   published,
-  status,
   amenities,
   nearby,
   advantages,
   highlights,
   contactNumber,
-  "img": images[0].asset->url + "?w=800&auto=format",
-  "gallery": images[].asset->url + "?w=600&auto=format",
-  "type": select(
-    propertyType in ["Commercial","Office"] => "commercial",
-    propertyType == "Plot" => "land",
-    "residential"
-  )
-}`;
+  "img": images[0].asset->url,
+  "gallery": images[].asset->url,
+  "imgAlt": image.asset->url,
+  "mainImageUrl": mainImage.asset->url,
+  "photos": photos[].asset->url
+}` ;
 
 // ─────────────────────────────────────────────────────────────
 // In-memory property store.  applyFilters() always reads here.
@@ -965,37 +986,120 @@ async function fetchFromSanity() {
 }
 
 // ─── normaliseProperty ───────────────────────────────────────
-// Converts a raw Sanity document to the shape renderProps expects.
-// CMS NOTE: If you rename a field in the schema, update mapping here.
+// Converts a raw Sanity document into the shape renderProps expects.
+// Handles various field name conventions your schema might use.
+//
+// Your Sanity schema fields → website display mapping:
+//   title / name                       → card title
+//   price / priceLabel / priceText     → price overlay
+//   priceValue / price_value / amount  → numeric price (for sorting)
+//   location / area / address          → location line
+//   city                               → city filter
+//   propertyType / property_type / type → type filter
+//   purpose / listingType / for        → purpose filter (For Sale / For Rent)
+//   beds / bedrooms / bhk              → bedrooms filter
+//   baths / bathrooms                  → bathrooms
+//   description / desc / details       → modal description
+//   images[] / image / photos[]        → property image
 // ─────────────────────────────────────────────────────────────
 function normaliseProperty(p) {
+  // ── Image: support both array and single image, and both asset refs and URLs
+  function getImgUrl(p) {
+    // Try images array first
+    const imgs = p.images || p.photos || p.gallery;
+    if (Array.isArray(imgs) && imgs.length > 0) {
+      const first = imgs[0];
+      if (typeof first === 'string') return first + '?w=800&auto=format';
+      if (first && first.asset && first.asset.url) return first.asset.url + '?w=800&auto=format';
+      if (first && first.url) return first.url + '?w=800&auto=format';
+    }
+    // Try single image field
+    const single = p.image || p.mainImage || p.thumbnail || p.photo;
+    if (single) {
+      if (typeof single === 'string') return single + '?w=800&auto=format';
+      if (single.asset && single.asset.url) return single.asset.url + '?w=800&auto=format';
+      if (single.url) return single.url + '?w=800&auto=format';
+    }
+    // Try pre-resolved 'img' field from GROQ projection
+    if (p.img && typeof p.img === 'string') return p.img;
+    // Fallback placeholder
+    return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80';
+  }
+
+  function getGallery(p) {
+    const imgs = p.images || p.photos || p.gallery || p.galleryImages;
+    if (!Array.isArray(imgs)) return [];
+    return imgs.map(img => {
+      if (typeof img === 'string') return img;
+      if (img && img.asset && img.asset.url) return img.asset.url + '?w=600&auto=format';
+      if (img && img.url) return img.url;
+      return null;
+    }).filter(Boolean);
+  }
+
+  // ── Price: accept number or string
+  const rawPrice = p.price || p.priceLabel || p.priceText || p.cost || '';
+  const price = typeof rawPrice === 'number'
+    ? '₹' + rawPrice.toLocaleString('en-IN')
+    : String(rawPrice);
+
+  const priceValue = p.priceValue || p.price_value || p.amount || p.numericPrice
+    || (typeof p.price === 'number' ? p.price : 0)
+    || 0;
+
+  // ── Location
+  const location = p.location || p.area || p.locality || p.address || p.place || 'Kanpur';
+  const city     = p.city || p.cityName || location.split(',')[0] || 'Kanpur';
+
+  // ── Type / Purpose / Beds
+  const propertyType = p.propertyType || p.property_type || p.type || p.category || 'Property';
+  const purpose      = p.purpose || p.listingType || p.listing_type || p.forSaleOrRent
+    || (p.isForRent ? 'For Rent' : 'For Sale');
+  const beds  = p.beds  || p.bedrooms || p.bhk  || p.bedroomCount || null;
+  const baths = p.baths || p.bathrooms || p.bathroomCount || null;
+  const area  = p.area && typeof p.area !== 'object' ? p.area
+    : p.builtUpArea || p.plotArea || p.carpetArea || p.areaInSqft || '';
+
+  // ── Description
+  const desc = p.description || p.desc || p.details || p.about || p.summary || '';
+
+  // ── Badge (label shown on card image)
+  const badge = p.badge || p.tag || p.label || purpose || propertyType;
+
+  // ── Status
+  const status = p.status || p.availabilityStatus || 'Available';
+
   return {
     ...p,
-    title:        p.title        || 'Untitled Property',
-    location:     p.location     || 'Kanpur',
-    city:         p.city         || 'Kanpur',
-    badge:        p.badge        || p.purpose || p.propertyType || 'Property',
-    price:        p.price        || '',
-    priceValue:   p.priceValue   || 0,
-    propertyType: p.propertyType || 'Apartment',
-    purpose:      p.purpose      || 'For Sale',
-    beds:         p.beds         || null,
-    baths:        p.baths        || null,
-    area:         p.area         || '',
-    img:          p.img          || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
-    gallery:      Array.isArray(p.gallery) && p.gallery.length ? p.gallery : [],
-    desc:         p.description  || '',
-    amenities:    Array.isArray(p.amenities)  ? p.amenities  : [],
-    nearby:       Array.isArray(p.nearby)     ? p.nearby.map(t=>({icon:'fas fa-map-marker-alt',text:t}))    : [],
-    advantages:   Array.isArray(p.advantages) ? p.advantages.map(t=>({icon:'fas fa-check-circle',text:t}))  : [],
-    highlights:   Array.isArray(p.highlights) ? p.highlights.map(t=>({icon:'fas fa-certificate',text:t}))   : [],
-    specs:[
-      {icon:'fas fa-home',          val:p.propertyType||'—', label:'Property Type'},
-      {icon:'fas fa-map-marker-alt',val:p.location||'—',     label:'Location'},
-      {icon:'fas fa-check-circle',  val:p.purpose||'—',      label:'Purpose'},
-      {icon:'fas fa-tasks',         val:p.status||'Available',label:'Status'},
+    title:        p.title || p.name || p.propertyName || 'Untitled Property',
+    desc,
+    price,
+    priceValue,
+    location,
+    city,
+    propertyType,
+    purpose,
+    beds,
+    baths,
+    area,
+    badge,
+    status,
+    img:     getImgUrl(p),
+    gallery: getGallery(p),
+    amenities:  Array.isArray(p.amenities)  ? p.amenities  : [],
+    nearby:     Array.isArray(p.nearby)     ? p.nearby.map(t => typeof t === 'string' ? {icon:'fas fa-map-marker-alt', text:t} : t)    : [],
+    advantages: Array.isArray(p.advantages) ? p.advantages.map(t => typeof t === 'string' ? {icon:'fas fa-check-circle', text:t} : t)  : [],
+    highlights: Array.isArray(p.highlights) ? p.highlights.map(t => typeof t === 'string' ? {icon:'fas fa-certificate', text:t} : t)   : [],
+    specs: [
+      {icon:'fas fa-home',          val: propertyType,    label:'Property Type'},
+      {icon:'fas fa-map-marker-alt',val: location,        label:'Location'},
+      {icon:'fas fa-check-circle',  val: purpose,         label:'Purpose'},
+      {icon:'fas fa-tasks',         val: status,          label:'Status'},
     ],
-    type: p.type || 'residential',
+    type: p.type || (
+      ['Commercial','Office','Shop','Showroom'].includes(propertyType) ? 'commercial' :
+      ['Plot','Land','Agricultural'].includes(propertyType) ? 'land' : 'residential'
+    ),
   };
 }
 
@@ -1003,7 +1107,7 @@ function normaliseProperty(p) {
 // Called on page load. Fetches Sanity data, then runs applyFilters().
 // ─────────────────────────────────────────────────────────────
 async function initCMS() {
-  const isConfigured = SANITY_CONFIG.projectId && SANITY_CONFIG.projectId !== 'hfd0rylt ';
+  const isConfigured = !!(SANITY_CONFIG.projectId && SANITY_CONFIG.projectId.length > 3);
   if (!isConfigured) {
     const grid = document.getElementById('props-grid');
     grid.innerHTML = `<div class="cms-config-notice show">
@@ -1011,7 +1115,7 @@ async function initCMS() {
       <h3>Connect Your Sanity CMS</h3>
       <p style="color:var(--gray);font-size:.88rem;line-height:1.7;max-width:420px;margin:0 auto;">
         Open <code>royal-properties-cms.html</code> and set
-        <code>hfd0rylt </code> to your Sanity project ID.
+        <code>YOUR_PROJECT_ID</code> to your Sanity project ID.
         See <code>SETUP-INSTRUCTIONS.md</code> for the full guide.
       </p>
     </div>`;
@@ -1031,7 +1135,7 @@ async function initCMS() {
     const errBanner = document.getElementById('cms-error-banner');
     const errMsg    = document.getElementById('cms-error-msg');
     if (errBanner) errBanner.classList.add('show');
-    if (errMsg)    errMsg.textContent = 'Could not load from CMS. Check your Project ID and CORS settings.';
+    if (errMsg)    errMsg.textContent = `Could not load from Sanity. Error: ${err.message}. Check: 1) CORS is enabled at sanity.io/manage for this domain, 2) Project ID is hfd0rylt`;
     properties = [];
   } finally {
     if (loader) loader.classList.remove('show');
