@@ -1,0 +1,388 @@
+Project Overview
+
+I have uploaded the complete source code of my client's website (Royal Properties). The current website uses Sanity CMS, but I want to completely remove Sanity and replace it with a custom CMS built using Supabase.
+
+Important Requirements:
+
+Analyze the entire uploaded project before making any changes.
+Preserve the existing website design, layout, colors, animations, responsiveness, and user experience.
+Do NOT redesign the frontend.
+Remove every dependency related to Sanity.
+Build a completely custom admin dashboard.
+Use Supabase as the database, authentication, and storage.
+Do NOT create a separate Node.js/Express backend.
+The website should communicate directly with Supabase using its JavaScript client.
+Main Objective
+
+Replace Sanity CMS with a modern custom CMS that allows the client to manage the website easily.
+
+The frontend should remain visually identical while all data comes from Supabase instead of Sanity.
+
+Remove Sanity Completely
+
+Remove everything related to Sanity including:
+
+Sanity Studio
+Sanity Client
+GROQ Queries
+Schemas
+Image Builder
+Sanity Packages
+Sanity Config Files
+Sanity Environment Variables
+Studio Routes
+All Imports
+All Utilities
+
+There should be zero references to Sanity anywhere in the project.
+
+Technology Stack
+
+Frontend
+
+React
+TypeScript
+Tailwind CSS
+Vite (if already used)
+
+Database
+
+Supabase Database
+
+Authentication
+
+Supabase Authentication
+
+Storage
+
+Supabase Storage
+
+Hosting
+
+Ready for Vercel/Netlify deployment
+Admin Dashboard
+
+Create a modern custom CMS inside the same project.
+
+Admin URL
+
+/admin
+Login
+
+Create a secure login page using Supabase Authentication.
+
+For development, create the first admin user with:
+
+Username
+
+royalproperties_0611
+
+Password
+
+royalproperties42388434
+
+The credentials should be stored securely through Supabase Authentication and be changeable later without modifying the code.
+
+Dashboard
+
+Modern dashboard showing:
+
+Total Properties
+Featured Properties
+Published Properties
+Draft Properties
+Contact Messages
+Testimonials
+Blog Posts
+
+Recent Activity
+
+Recent Properties
+
+Quick Actions
+
+Property Management (Most Important)
+
+Before building the CMS, analyze the current frontend filters and property pages.
+
+The property form should only contain the fields actually needed by the existing website.
+
+Do NOT build a huge real estate CRM.
+
+Property Form
+Basic Information
+Property Title
+Slug (Auto Generated)
+Description
+Price
+Property Type
+Purpose
+Status
+Location
+Bedrooms
+Bathrooms
+Area
+Featured Property (Yes/No)
+Images
+
+Support
+
+Featured Image
+Multiple Property Images
+Drag & Drop Upload
+Image Preview
+Delete Images
+Reorder Images
+
+Store all images in Supabase Storage.
+
+Optional Fields
+Amenities
+Google Maps Link
+YouTube Video Link
+SEO
+Meta Title
+Meta Description
+Property Filters (Very Important)
+
+The website already contains filters such as:
+
+Search
+Location
+Property Type
+Bedrooms
+Purpose
+Minimum Price
+Maximum Price
+Sorting
+
+The CMS must be designed around these existing filters.
+
+When a property is created:
+
+It should immediately work with the website filters.
+The filter options should remain synchronized with the database.
+No duplicate values due to different spellings.
+New Locations or Property Types should automatically appear in the frontend filters without changing code.
+
+The existing filter functionality should continue working exactly as before.
+
+Property Listing
+
+The admin should be able to:
+
+Add Property
+Edit Property
+Delete Property
+Duplicate Property
+Publish
+Unpublish
+Save as Draft
+Search
+Pagination
+Bulk Delete
+Keep the CMS Simple
+
+Do NOT create unnecessary fields such as:
+
+Owner Details
+Mortgage
+Legal Documents
+Commission
+HOA Fees
+Accounting
+CRM
+Internal Notes
+
+Only include the fields needed for a professional property listing website.
+
+Dynamic Categories
+
+Create database tables for:
+
+Property Types
+
+Locations
+
+Purposes
+
+Amenities
+
+These should be manageable from the CMS.
+
+Whenever a new category is added, it should automatically become available in the property form and website filters.
+
+Blog Management
+
+CRUD
+
+Fields
+
+Title
+Slug
+Description
+Featured Image
+Category
+Publish Date
+SEO
+Testimonials
+
+CRUD
+
+Fields
+
+Name
+Designation
+Rating
+Photo
+Testimonial
+Contact Messages
+
+Store all enquiries submitted through the website.
+
+Fields
+
+Name
+Email
+Phone
+Message
+Date
+
+Admin can:
+
+Mark Read
+Delete
+Archive
+Homepage Management
+
+Allow editing of:
+
+Hero Section
+About Section
+Featured Properties
+Why Choose Us
+Testimonials
+Footer
+Contact Information
+SEO Settings
+
+Editable
+
+Meta Title
+Meta Description
+Keywords
+Open Graph Image
+Website Settings
+
+Editable
+
+Website Name
+Logo
+Favicon
+Phone Number
+WhatsApp
+Email
+Office Address
+Social Media Links
+Supabase Database
+
+Create appropriate Supabase tables for:
+
+properties
+property_types
+locations
+amenities
+blogs
+testimonials
+contact_messages
+settings
+users
+
+Use proper foreign key relationships where required.
+
+Supabase Storage
+
+Create storage buckets for:
+
+Property Images
+Blog Images
+Testimonial Photos
+Website Assets
+
+Automatically upload and retrieve images from Supabase Storage.
+
+Code Structure
+
+Organize the project cleanly.
+
+Example:
+
+src/
+
+components/
+
+pages/
+
+admin/
+
+hooks/
+
+services/
+
+lib/
+
+supabase/
+
+types/
+
+utils/
+
+assets/
+Performance
+
+Implement:
+
+Lazy Loading
+Optimized Image Loading
+Pagination
+Search Optimization
+Code Splitting
+Dummy Data
+
+Generate:
+
+20 Sample Properties
+10 Blog Posts
+10 Testimonials
+10 Contact Messages
+Final Deliverables
+
+The completed project should include:
+
+Complete removal of Sanity CMS.
+No remaining Sanity dependencies.
+Frontend connected directly to Supabase.
+Secure custom admin dashboard.
+Supabase Authentication.
+Supabase Database integration.
+Supabase Storage integration.
+Property management with multiple image uploads.
+Dynamic filters that automatically stay synchronized with the database.
+Blog management.
+Testimonial management.
+Contact message management.
+Homepage management.
+Website settings.
+SEO settings.
+Responsive admin dashboard.
+Clean, modular code.
+.env.example with all required Supabase variables.
+README explaining how to configure Supabase.
+Final Instructions
+Analyze the uploaded project before making any changes.
+Identify every place where Sanity is currently used.
+Remove all Sanity-related code and dependencies.
+Replace all Sanity queries with Supabase queries.
+Keep the frontend design exactly the same.
+Ensure every property added from the CMS immediately appears on the website and works with the existing filters.
+The final result should be a production-ready real estate website powered entirely by React + Supabase, with no custom backend and no dependency on Sanity CMS.
