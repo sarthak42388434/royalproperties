@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Royal Properties"
+version = "1.0.0"
+id = "artifacts/royal-properties"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21893
+
+[services.development]
+run = "pnpm --filter @workspace/royal-properties run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/royal-properties", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/royal-properties/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21893"
+BASE_PATH = "/"
