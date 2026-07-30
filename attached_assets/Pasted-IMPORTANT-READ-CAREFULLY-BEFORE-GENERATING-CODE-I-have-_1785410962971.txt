@@ -1,0 +1,642 @@
+IMPORTANT: READ CAREFULLY BEFORE GENERATING CODE
+
+I have uploaded the complete source code of my client’s website Royal Properties.
+
+The current project uses Sanity CMS and is causing fetch/CORS issues. I want to replace Sanity with a simple custom CMS using Supabase only.
+
+MOST IMPORTANT REQUIREMENT — DO NOT WASTE REPLIT CREDITS
+
+This project must be done in LOW CREDIT MODE.
+
+DO NOT:
+
+Redesign the website
+
+Change the UI
+
+Change colors
+
+Change fonts
+
+Change spacing
+
+Change animations
+
+Change responsiveness
+
+Create unnecessary pages
+
+Create a new frontend from scratch
+
+Add heavy libraries
+
+Add complex features that are not required
+
+Refactor unrelated code
+
+DO:
+
+Keep the frontend exactly the same
+
+Reuse existing components
+
+Reuse existing layouts
+
+Reuse existing CSS/Tailwind classes
+
+Change only the data source (Sanity → Supabase)
+
+Build only the minimum CMS required for functionality
+
+The goal is to save as many Replit AI credits as possible while making the website fully functional.
+
+ANALYZE FIRST, THEN MODIFY
+
+Before writing code:
+
+Analyze the entire uploaded project.
+
+Identify all Sanity-related files.
+
+Identify all property pages.
+
+Identify all filters.
+
+Identify all places where Sanity data is fetched.
+
+Identify the property detail page structure.
+
+Identify image handling.
+
+Identify SEO/meta handling.
+
+Then make targeted modifications only.
+
+REMOVE SANITY COMPLETELY
+
+Delete all Sanity-related code and dependencies.
+
+Remove:
+
+Sanity Studio
+
+Sanity Client
+
+GROQ queries
+
+Schemas
+
+Image builder
+
+Sanity packages
+
+Sanity config files
+
+Sanity environment variables
+
+Studio routes
+
+All Sanity imports
+
+All Sanity helper utilities
+
+After completion there should be zero references to Sanity in the project.
+
+TECHNOLOGY STACK
+
+Keep the existing frontend stack.
+
+Use:
+
+React
+
+TypeScript
+
+Tailwind CSS
+
+Vite (if already used)
+
+Use Supabase only for:
+
+Database
+
+Authentication
+
+Storage
+
+Do NOT create any Node.js/Express backend.
+
+The app should communicate directly with Supabase.
+
+ADMIN DASHBOARD
+
+Create a lightweight custom admin panel inside the same project.
+
+URL
+
+/admin
+
+LOGIN
+
+Use Supabase Authentication.
+
+Create the first admin account for development:
+
+Username: royalproperties_0611
+
+Password: royalproperties42388434
+
+Store credentials securely through Supabase Auth, not hardcoded throughout the app.
+
+Protect all admin routes.
+
+KEEP DASHBOARD LIGHTWEIGHT
+
+Do not build a complex ERP.
+
+Dashboard should only show:
+
+Total Properties
+
+Featured Properties
+
+Draft Properties
+
+Contact Messages
+
+Testimonials
+
+Blog Posts
+
+And a small Recent Properties section.
+
+No heavy charts unless they are very lightweight.
+
+PROPERTY MANAGEMENT (MOST IMPORTANT)
+
+Analyze the existing frontend filters and make the database compatible with them.
+
+Property Form Fields
+Required
+
+Title
+
+Slug (auto-generated)
+
+Description
+
+Price
+
+Property Type
+
+Purpose
+
+Status
+
+Location
+
+Bedrooms
+
+Bathrooms
+
+Area
+
+Featured Property
+
+Images
+
+Featured Image
+
+Multiple Property Images
+
+Drag & Drop Upload
+
+Preview
+
+Delete
+
+Reorder
+
+Store images in Supabase Storage.
+
+Optional
+
+Amenities
+
+Google Maps Link
+
+YouTube Video Link
+
+SEO
+
+Meta Title
+
+Meta Description
+
+FILTER COMPATIBILITY (CRITICAL)
+
+The website already has these filters:
+
+Search
+
+Location
+
+Property Type
+
+Bedrooms
+
+Purpose
+
+Min Price
+
+Max Price
+
+Sorting
+
+The CMS and database must match these filters exactly.
+
+Rules
+
+New properties must instantly work with filters.
+
+No duplicate values due to spelling differences.
+
+New locations/types should automatically appear in filters.
+
+Do not break existing filter logic.
+
+Keep the current filter UI exactly the same.
+
+KEEP PROPERTY FORM SIMPLE
+
+Do NOT add:
+
+Owner details
+
+Legal documents
+
+Mortgage
+
+Commission
+
+Accounting
+
+CRM
+
+Internal notes
+
+HOA fees
+
+Tax fields
+
+This is a property listing website, not a real estate management system.
+
+PROPERTY LIST ACTIONS
+
+Admin can:
+
+Add
+
+Edit
+
+Delete
+
+Duplicate
+
+Publish
+
+Unpublish
+
+Save as Draft
+
+Search
+
+Paginate
+
+No unnecessary bulk operations.
+
+DYNAMIC TABLES
+
+Create lightweight Supabase tables for:
+
+property_types
+
+locations
+
+amenities
+
+These should feed both the CMS and frontend filters automatically.
+
+BLOG MANAGEMENT
+
+Keep it simple.
+
+Fields:
+
+Title
+
+Slug
+
+Description
+
+Featured Image
+
+Category
+
+Publish Date
+
+Meta Title
+
+Meta Description
+
+TESTIMONIALS
+
+Fields:
+
+Name
+
+Designation
+
+Rating
+
+Photo
+
+Testimonial
+
+CONTACT MESSAGES
+
+Store:
+
+Name
+
+Email
+
+Phone
+
+Message
+
+Date
+
+Admin can:
+
+Mark Read
+
+Delete
+
+HOMEPAGE MANAGEMENT
+
+Allow editing only:
+
+Hero text
+
+About text
+
+Featured Properties section
+
+Why Choose Us text
+
+Testimonials section
+
+Footer contact info
+
+Do not make every tiny element editable.
+
+WEBSITE SETTINGS
+
+Editable:
+
+Site Name
+
+Logo
+
+Favicon
+
+Phone
+
+WhatsApp
+
+Email
+
+Address
+
+Social Links
+
+SUPABASE STORAGE
+
+Create buckets:
+
+properties
+
+blogs
+
+testimonials
+
+site-assets
+
+Use optimized image loading.
+
+CODE STRUCTURE
+
+Keep it clean but minimal.
+
+src/
+  admin/
+  components/
+  pages/
+  services/
+  supabase/
+  hooks/
+  types/
+  utils/
+
+Do not over-engineer.
+
+PERFORMANCE (LOW CREDIT + FAST SITE)
+
+Implement only lightweight optimizations:
+
+Lazy load images
+
+Paginate properties
+
+Debounce search
+
+Use React Query only if already present; otherwise avoid adding it
+
+Avoid heavy state libraries
+
+DUMMY DATA
+
+Generate minimal useful data:
+
+12 Properties
+
+3 Blog Posts
+
+5 Testimonials
+
+5 Contact Messages
+
+Do not generate huge datasets.
+
+MY WORK SHOULD BE MINIMAL
+
+At the end, the project should be almost ready to use.
+
+I should only need to:
+
+Create a Supabase project
+
+Paste environment variables
+
+Run SQL tables (if needed)
+
+Deploy
+
+Everything else should already be connected.
+
+PROVIDE THESE FILES AUTOMATICALLY
+
+Generate:
+
+.env.example
+
+README.md
+
+supabase-schema.sql
+
+supabase-storage-setup.md
+
+IMPORTANT: DO NOT TOUCH THESE UNLESS NECESSARY
+
+Existing navbar
+
+Existing footer
+
+Existing property cards
+
+Existing property detail layout
+
+Existing testimonials design
+
+Existing contact page
+
+Existing responsive behavior
+
+Existing animations
+
+Only replace data fetching.
+
+FIX THE CURRENT ERROR
+
+The current website shows a Sanity fetch/CORS error.
+
+Replace all Sanity fetches with Supabase queries so that:
+
+Property listing works
+
+Property details work
+
+Filters work
+
+Search works
+
+Images load correctly
+
+HOSTING STEPS (REQUIRED)
+
+At the end of the README, provide step-by-step hosting instructions for a beginner.
+
+Include:
+
+1. Create Supabase Project
+
+Create project
+
+Copy URL
+
+Copy anon key
+
+2. Run SQL
+
+Open SQL Editor
+
+Run supabase-schema.sql
+
+3. Create Storage Buckets
+
+properties
+
+blogs
+
+testimonials
+
+site-assets
+
+4. Create Admin User
+
+Open Authentication
+
+Add user with provided credentials
+
+5. Add Environment Variables
+
+Show exactly where to add:
+
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+
+6. Test Locally
+
+npm install
+npm run dev
+
+7. Deploy to Vercel
+
+Import project
+
+Add env variables
+
+Deploy
+
+8. Access Admin
+
+/admin
+
+FINAL DELIVERABLE
+
+Deliver a production-ready React + Supabase website with:
+
+No Sanity dependency
+
+Same frontend design
+
+Working property listing
+
+Working property details
+
+Working filters
+
+Working search
+
+Working admin login
+
+Working property CRUD
+
+Multiple image uploads
+
+Working blog
+
+Working testimonials
+
+Working contact storage
+
+Working settings
+
+Minimal code changes
+
+Minimal Replit credit usage
+
+Minimal manual setup for me
+
+The website must look the same, behave the same, and only the CMS/data source should change.
